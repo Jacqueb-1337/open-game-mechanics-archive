@@ -1,0 +1,18 @@
+{
+  "id": 1,
+  "slug": "jumping-stomp",
+  "title": "Jumping / Stomping Enemies",
+  "engine": "threejs",
+  "demo_version": "1.0.0",
+  "authors": ["Jacqueb-1337"],
+  "first_known_uses": [
+    {"work": "Donkey Kong", "year": 1981, "link": "https://en.wikipedia.org/wiki/Donkey_Kong_(video_game)"},
+    {"work": "Super Mario Bros.", "year": 1985, "link": "https://en.wikipedia.org/wiki/Super_Mario_Bros."}
+  ],
+  "claims_shown": [
+    "Player vertical impulse yields arc; stomp vector cancels enemy.",
+    "Enemy defeat is triggered by collision from above."
+  ],
+  "notes": "Focus on generic jump/stomp; no IP-proprietary art.",
+  "license": "CC0-1.0"
+}
