@@ -9,6 +9,34 @@ const JUMP_SPEED = 10;
 let canJump = false;
 const clock = new THREE.Clock();
 const keys = {};
+let resetCooldown = false;
+
+console.log("test");
+function resetGame() {
+  if (resetCooldown) return;
+  resetCooldown = true;
+  setTimeout(() => resetCooldown = false, 500); // Prevent rapid resets
+
+  // Reset player
+  player.position.set(0, 1, 0);
+  velocityY = 0;
+  canJump = false;
+
+  // Reset or recreate enemy
+  if (enemy) {
+    scene.remove(enemy);
+  }
+  const enemyGeo = new THREE.BoxGeometry(1, 1, 1);
+  const enemyMat = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+  enemy = new THREE.Mesh(enemyGeo, enemyMat);
+  enemy.position.set(3, 1, 0);
+  scene.add(enemy);
+
+  // Clear keys
+  for (let key in keys) {
+    keys[key] = false;
+  }
+}
 
 function init() {
   scene = new THREE.Scene();
@@ -50,6 +78,12 @@ function init() {
   window.addEventListener('resize', onResize);
   document.addEventListener('keydown', (e) => { keys[e.code] = true; });
   document.addEventListener('keyup', (e) => { keys[e.code] = false; });
+
+  const resetButton = document.getElementById('resetButton');
+  resetButton.addEventListener('click', () => {
+    resetGame();
+    resetButton.blur();
+  });
 }
 
 function onResize() {
@@ -87,14 +121,24 @@ function update(delta) {
     const playerBB = new THREE.Box3().setFromObject(player);
     const enemyBB = new THREE.Box3().setFromObject(enemy);
     if (playerBB.intersectsBox(enemyBB)) {
+      console.log('Collision detected!');
       const playerBottom = playerBB.min.y;
       const enemyTop = enemyBB.max.y;
-      // Stomp if player is moving downwards and from above
-      if (velocityY < 0 && playerBottom >= enemyTop) {
+      console.log(`Player bottom: ${playerBottom}, Enemy top: ${enemyTop}, VelocityY: ${velocityY}`);
+      // Stomp: player is moving down, and player's bottom is above enemy's top
+      if (velocityY < 0 && playerBottom >= enemyTop - 0.1) {
+        console.log('Stomp!');
         scene.remove(enemy);
         enemy = null;
-        velocityY = JUMP_SPEED * 0.5;
+        velocityY = JUMP_SPEED * 0.5; // bounce
         canJump = false;
+      } else {
+        // Block horizontal movement if colliding from the side
+        const dx = Math.abs(player.position.x - enemy.position.x);
+        if (dx < 1.0) { // if close in x, block horizontal movement
+          console.log('Blocking horizontal movement');
+          player.position.x -= moveX;
+        }
       }
     }
   }
