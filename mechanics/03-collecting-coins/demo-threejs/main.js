@@ -4,6 +4,8 @@ let scene, camera, renderer;
 let player, ground;
 let coins = [];
 let score = 0;
+let lives = 3;
+let lastLifeScore = 0;
 let velocityY = 0;
 const GRAVITY = -30;
 const MOVE_SPEED = 5;
@@ -12,6 +14,28 @@ let canJump = false;
 const clock = new THREE.Clock();
 const keys = {};
 let resetCooldown = false;
+
+function spawnCoin() {
+  const coinGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+  const coinMat = new THREE.MeshStandardMaterial({ color: 0xffff00 });
+  const coin = new THREE.Mesh(coinGeo, coinMat);
+  coin.position.set(Math.random() * 10 - 5, 1, Math.random() * 10 - 5);
+  scene.add(coin);
+  coins.push(coin);
+}
+
+function showScorePlus() {
+  const plus = document.getElementById('scorePlus');
+  plus.style.opacity = '1';
+  setTimeout(() => plus.style.opacity = '0', 1000);
+}
+
+function showLivesPlus() {
+  const plus = document.getElementById('livesPlus');
+  plus.style.opacity = '1';
+  setTimeout(() => plus.style.opacity = '0', 1000);
+}
+
 function resetGame() {
   if (resetCooldown) return;
   resetCooldown = true;
@@ -26,18 +50,18 @@ function resetGame() {
   score = 0;
   document.getElementById('score').textContent = 'Score: 0';
 
+  // Reset lives
+  lives = 3;
+  lastLifeScore = 0;
+  document.getElementById('lives').textContent = 'Lives: 3';
+
   // Remove existing coins
   coins.forEach(coin => scene.remove(coin));
   coins = [];
 
   // Create new coins
   for (let i = 0; i < 5; i++) {
-    const coinGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-    const coinMat = new THREE.MeshStandardMaterial({ color: 0xffff00 });
-    const coin = new THREE.Mesh(coinGeo, coinMat);
-    coin.position.set(Math.random() * 10 - 5, 1, Math.random() * 10 - 5);
-    scene.add(coin);
-    coins.push(coin);
+    spawnCoin();
   }
 
   // Clear keys
@@ -78,12 +102,7 @@ function init() {
 
   // Create coins
   for (let i = 0; i < 5; i++) {
-    const coinGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-    const coinMat = new THREE.MeshStandardMaterial({ color: 0xffff00 });
-    const coin = new THREE.Mesh(coinGeo, coinMat);
-    coin.position.set(Math.random() * 10 - 5, 1, Math.random() * 10 - 5);
-    scene.add(coin);
-    coins.push(coin);
+    spawnCoin();
   }
 
   window.addEventListener('resize', onResize);
@@ -107,10 +126,10 @@ function update(delta) {
   // Horizontal movement
   let moveX = 0;
   let moveZ = 0;
-  if (keys['ArrowLeft'] || keys['KeyA']) moveX -= MOVE_SPEED * delta;
-  if (keys['ArrowRight'] || keys['KeyD']) moveX += MOVE_SPEED * delta;
-  if (keys['ArrowUp'] || keys['KeyW']) moveZ -= MOVE_SPEED * delta;
-  if (keys['ArrowDown'] || keys['KeyS']) moveZ += MOVE_SPEED * delta;
+  if (keys['KeyA'] || keys['ArrowLeft']) moveX -= MOVE_SPEED * delta;
+  if (keys['KeyD'] || keys['ArrowRight']) moveX += MOVE_SPEED * delta;
+  if (keys['KeyW'] || keys['ArrowUp']) moveZ -= MOVE_SPEED * delta;
+  if (keys['KeyS'] || keys['ArrowDown']) moveZ += MOVE_SPEED * delta;
   player.position.x += moveX;
   player.position.z += moveZ;
 
@@ -120,7 +139,7 @@ function update(delta) {
   camera.lookAt(player.position);
 
   // Jumping
-  if ((keys['Space'] || keys['KeyW'] || keys['ArrowUp']) && canJump) {
+  if (keys['Space'] && canJump) {
     velocityY = JUMP_SPEED;
     canJump = false;
   }
@@ -145,8 +164,20 @@ function update(delta) {
       coins.splice(index, 1);
       score++;
       document.getElementById('score').textContent = `Score: ${score}`;
+      showScorePlus();
+      if (score > 0 && score % 10 === 0 && score !== lastLifeScore) {
+        lives++;
+        lastLifeScore = score;
+        document.getElementById('lives').textContent = `Lives: ${lives}`;
+        showLivesPlus();
+      }
     }
   });
+
+  // Random coin spawning
+  if (coins.length < 5 && Math.random() < 0.02) {
+    spawnCoin();
+  }
 }
 
 function animate() {

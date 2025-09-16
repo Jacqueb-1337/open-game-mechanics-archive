@@ -33,7 +33,38 @@ html, body, canvas {
   padding: 5px 10px;
   border-radius: 5px;
 }
+#lives {
+  position: absolute;
+  top: 50px;
+  left: 10px;
+  font-size: 24px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+#scorePlus {
+  position: absolute;
+  top: 10px;
+  left: 120px;
+  font-size: 20px;
+  color: green;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+#livesPlus {
+  position: absolute;
+  top: 50px;
+  left: 120px;
+  font-size: 20px;
+  color: green;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
 </style>
 <div id="score">Score: 0</div>
+<div id="lives">Lives: 3</div>
+<div id="scorePlus">+1</div>
+<div id="livesPlus">+1</div>
 <button id="resetButton" tabindex="-1">Reset</button>
 <script type="module" src="./main.js"></script>
