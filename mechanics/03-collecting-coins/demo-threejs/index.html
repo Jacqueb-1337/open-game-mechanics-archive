@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Mechanic Demo – Collecting Coins</title>
+<style>
+html, body, canvas {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  display: block;
+}
+#resetButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 10px 20px;
+  background-color: #0077ff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+#resetButton:hover {
+  background-color: #0055cc;
+}
+#score {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 24px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+</style>
+<div id="score">Score: 0</div>
+<button id="resetButton" tabindex="-1">Reset</button>
+<script type="module" src="./main.js"></script>

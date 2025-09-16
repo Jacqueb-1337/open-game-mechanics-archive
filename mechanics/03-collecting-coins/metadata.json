@@ -1,0 +1,7 @@
+{
+  "slug": "collecting-coins",
+  "title": "Collecting Coins for Extra Lives / Score",
+  "description": "A demo illustrating the classic mechanic of collecting coins to gain extra lives or increase score. Includes coin spawning, collection detection, and UI updates.",
+  "tags": ["collection", "scoring", "lives"],
+  "notes": "Focus on generic coin collection; no IP-proprietary art."
+}
